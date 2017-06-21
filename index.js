@@ -34,17 +34,102 @@ app.post('/webhook/', function(req, res) {
     let sender = event.sender.id
     if (event.message && event.message.text) {
       let text = event.message.text
-      sendText(sender, "Text echo: "+ text.substring(0,100))
+      decideMessage(sender, text)
+      // sendText(sender, "Text echo: "+ text.substring(0,100))
+    }
+    if (event.postback) {
+      let text = JSON.stringify(event.postback)
+      decideMessage(sender, text)
     }
   }
   res.sendStatus(200)
 })
 
+function decideMessage(sender, text1) {
+  let text = text1.toLowerCase()
+  if (text.includes("summer")) {
+    sendImageMessage(sender)
+  } else if ( text.includes("winter") ) {
+    sendGenericMessage(sender)
+  } else {
+    sendText(sender, "I like Fall")
+    // Send Question
+    sendButtonMessage(sender, "What's your favorite season?")
+  }
+}
+
 function sendText(sender, text) {
   let messageData = {text: text}
+  sendRequest(sender, messageData)
+}
+
+function sendButtonMessage(sender, text){
+  let messageData = {
+    "attachment":{
+      "type":"template",
+      "payload":{
+        "template_type":"button",
+        "text": text,
+        "buttons":[
+          {
+            "type":"postback",
+            "title":"Summer",
+            "payload":"summer"
+          },
+          {
+            "type":"postback",
+            "title":"Winter",
+            "payload":"winter"
+          }
+        ]
+      }
+    }
+  }
+  sendRequest(sender, messageData)
+}
+
+function sendImageMessage(sender) {
+  let messageData = {
+    "attachment":{
+      "type":"image",
+      "payload":{
+        "url":"https://petersapparel.com/img/shirt.png"
+      }
+    }
+  }
+  sendRequest(sender, messageData)
+}
+
+function sendGenericMessage(sender){
+  let messageData = {
+    "attachment":{
+      "type":"template",
+      "payload":{
+        "template_type":"generic",
+        "elements":[
+           {
+            "title":"winter",
+            "image_url":"https://petersapparel.com/img/shirt.png",
+            "subtitle":"I Love winter.",
+            "buttons":[
+              {
+                "type":"web_url",
+                "url":"https://petersfancybrownhats.com",
+                "title":"View Website"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+  sendRequest(sender, messageData)
+}
+
+function sendRequest(sender, messageData) {
   request({
     url: "https://graph.facebook.com/v2.6/me/messages",
-    qs: { access_token: token},
+    qs: { access_token: token },
     method: "POST",
     json: {
       recipient: {id: sender},
