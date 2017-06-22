@@ -45,7 +45,7 @@ app.post('/webhook/', function(req, res) {
 function addPersistentMenu(){
  request({
     url: 'https://graph.facebook.com/v2.6/me/messenger_profile',
-    qs: { access_token: PAGE_ACCESS_TOKEN },
+    qs: { access_token: token },
     method: 'POST',
     json:{
   "get_started":{
@@ -60,6 +60,7 @@ function addPersistentMenu(){
         console.log('Error: ', response.body.error)
     }
 })
+}
 
 
 function sendText(sender, text) {
@@ -84,6 +85,8 @@ function sendRequest(sender, messageData) {
     }
   })
 }
+
+
 app.listen(app.get('port'), function(){
   console.log('running: port')
 })
