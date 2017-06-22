@@ -45,6 +45,23 @@ function sendText(sender, text) {
   sendRequest(sender, messageData)
 }
 
+function sendRequest(sender, messageData) {
+  request({
+    url: "https://graph.facebook.com/v2.6/me/messages",
+    qs: { access_token: token },
+    method: "POST",
+    json: {
+      recipient: {id: sender},
+      message: messageData
+    }
+  }, function(error, response, body) {
+    if (error){
+      console.log("sending error")
+    } else if (response.body.error){
+      console.log("response body error")
+    }
+  })
+}
 app.listen(app.get('port'), function(){
   console.log('running: port')
 })
