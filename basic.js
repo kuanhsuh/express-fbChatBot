@@ -18,6 +18,7 @@ app.get('/', function(req, res) {
 })
 
 let token = "EAANUiOKJXm0BAK7P2xa3FqONbUTexxGdGAhNO6StjWATgRJBn3IZBHZB9mscgVpqj5YZB8gIBl6otZCNzCSiFd7w6C0ESxBmamOU0jLx4VUhqHLu47EnAI6F5VaTUkCfZBM0cho2rbqdMdKin9K6Ay8piDEj1i3azxZCVkUFNqDAZDZD"
+
 // FACEBOOK (security thing)
 app.get('/webhook/', function(req, res) {
   // hub?
@@ -28,7 +29,6 @@ app.get('/webhook/', function(req, res) {
 })
 
 app.post('/webhook/', function(req, res) {
-  addPersistentMenu()
   let messaging_events = req.body.entry[0].messaging
   for (let i = 0; i < messaging_events.length; i++){
     let event = messaging_events[i]
@@ -40,27 +40,6 @@ app.post('/webhook/', function(req, res) {
   }
   res.sendStatus(200)
 })
-
-
-function addPersistentMenu(){
- request({
-    url: 'https://graph.facebook.com/v2.6/me/messenger_profile',
-    qs: { access_token: PAGE_ACCESS_TOKEN },
-    method: 'POST',
-    json:{
-  "get_started":{
-    "payload":"GET_STARTED_PAYLOAD"
-   }
- }
-}, function(error, response, body) {
-    console.log(response)
-    if (error) {
-        console.log('Error sending messages: ', error)
-    } else if (response.body.error) {
-        console.log('Error: ', response.body.error)
-    }
-})
-
 
 function sendText(sender, text) {
   let messageData = {text: text}
@@ -84,6 +63,7 @@ function sendRequest(sender, messageData) {
     }
   })
 }
+
 app.listen(app.get('port'), function(){
   console.log('running: port')
 })
