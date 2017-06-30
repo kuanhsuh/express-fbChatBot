@@ -3,6 +3,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
+var config = require('./config');
 
 const app = express()
 
@@ -21,7 +22,7 @@ app.get('/setup', function(req, res){
   setupGetStartedButton(res);
 })
 
-let token = "EAANUiOKJXm0BAK7P2xa3FqONbUTexxGdGAhNO6StjWATgRJBn3IZBHZB9mscgVpqj5YZB8gIBl6otZCNzCSiFd7w6C0ESxBmamOU0jLx4VUhqHLu47EnAI6F5VaTUkCfZBM0cho2rbqdMdKin9K6Ay8piDEj1i3azxZCVkUFNqDAZDZD"
+let token = config.token
 
 // FACEBOOK (security thing)
 app.get('/webhook/', function(req, res) {
@@ -62,9 +63,9 @@ function decideMessage(sender, text) {
 
 function setupGetStartedButton(res){
   var messageData = {
-          "get_started":{
-              "payload":"getstarted"
-          }
+    "get_started":{
+        "payload":"getstarted"
+    }
   };
   // Start the request
   request({
